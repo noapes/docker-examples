@@ -44,8 +44,7 @@ def Select():
     rows = cursor.fetchall()
     handle = []
     for id,handle in rows:
-        
-  
+        print(id,handle)
     cursor.close()
     cnx.close()
 
