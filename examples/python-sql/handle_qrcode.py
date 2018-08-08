@@ -2,8 +2,12 @@
 # _*_ coding:utf-8 _*_
 
 ## 数据库处理需求
-# 1. 将数据导入到3xiazai保持id自增
+# 1. 将ttrar数据导入到3xiazai保持id自增,注意分类对应
 # 2. 处理下载链接
+#   a. 如果downfile2 不为空，则 pc_down_url=download.ttrar.com/ + downfile2
+#   b. 如果downfile2为空，ycdownload 不为空，则pc_down_url=ycdownload
+#   c. 如果downfile2为空，ycsownload 为空，downloadfiles不为空，则pc_down_url=downloadfiles[0]['fileurl']
+#   d. 如果downfile2为空，ycsownload 为空，downloadfiles为空,则pc_down_url=title_url + @ + title
 # 3. 生成二维码并且更新二维码图片md5值到数据库.
 
 import qrcode
