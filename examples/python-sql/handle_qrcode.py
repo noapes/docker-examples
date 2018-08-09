@@ -9,6 +9,8 @@
 #   c. 如果downfile2为空，ycsownload 为空，downloadfiles不为空，则pc_down_url=downloadfiles[0]['fileurl']
 #   d. 如果downfile2为空，ycsownload 为空，downloadfiles为空,则pc_down_url=title_url + @ + title
 # 3. 生成二维码并且更新二维码图片md5值到数据库.
+# 4. 区分是pc_down_url,ios_down_url,android_down_url,插入到线上表
+# 5. 根据 article表，需要生成一张tiny表，生成层级关系
 
 import qrcode
 import pyqrcode
@@ -56,8 +58,6 @@ def update():
             x = cursor.execute(query,{'url':v,'id':k})
             cnx.commit()
             print(x,cursor.statement)
-        
-            # print(query,x,k,v)
     cursor.close()
     cnx.close()
 
