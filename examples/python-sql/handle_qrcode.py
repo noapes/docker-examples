@@ -94,7 +94,13 @@ def handle_download_url():
             continue
     return fileurl2
     
+def generate_temporary_table():
+    cnx = mysql.connector.connect(**config)
+    cursor = cnx.cursor()
 
+# def generate_tiny_table():
+
+# def insert_to_online():
 if __name__ == "__main__":
     # execute only if run as a script
     handle_softimage() 
