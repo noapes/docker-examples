@@ -13,6 +13,7 @@
 import qrcode
 import pyqrcode
 import mysql.connector
+import re
 import os
 
 PATH = "./qrcode"
@@ -33,21 +34,38 @@ config = {
   'use_pure': False,
 }
 
+cnx = mysql.connector.connect(**config)
 
-def Select():
-    cnx = mysql.connector.connect(**config);
-    cursor = cnx.cursor()
+def select():
+    cursor = cnx.cursor(dictionary =True)
 
-    query = ("SELECT id,downfiles FROM handle_soft where length(downfiles)<>0 limit 10")
+    query = ("SELECT id,downfiles FROM handle_soft where length(downfiles)<>0")
 
     cursor.execute(query)
     rows = cursor.fetchall()
-    handle = []
-    for id,handle in rows:
-        print(id,handle)
+    for row in rows:
+        downfiles = row['downfiles']
+        pattern = '((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'\"\\\/.,<>?\xab\xbb\u201c\u201d\u2018\u2019]))'
+        urls = re.compile(pattern)
+        urls = urls.findall(downfiles)
+        url = urls.pop()
+        if len(urls):
+            url = urls.pop()
+            handle = dict(row['id'],url[0])
+            print(handle)
+        else:
+            continue
+        print(url[0])
+        
+
     cursor.close()
     cnx.close()
 
+# def insert():
+    
+# def handle_download_url():
+    
+
 if __name__ == "__main__":
     # execute only if run as a script
-    Select() 
+    select() 
