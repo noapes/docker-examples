@@ -97,10 +97,14 @@ def handle_download_url():
 def generate_temporary_table():
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
+    query = "select s.id, from handle_software s left join handle_software_data d on s.id=d.id"
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    print(rows,cursor.statement)
 
 # def generate_tiny_table():
 
 # def insert_to_online():
 if __name__ == "__main__":
     # execute only if run as a script
-    handle_softimage() 
+    generate_temporary_table() 
