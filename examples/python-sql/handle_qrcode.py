@@ -12,6 +12,29 @@
 # 4. 区分是pc_down_url,ios_down_url,android_down_url,插入到线上表
 # 5. 根据 article表，需要生成一张tiny表，生成层级关系
 
+## 需要生成的表字段
+# id,
+# cat_id,
+# article_id,
+# parent_cat_id,
+# old_url,cat_url,
+# parent_cat_url,
+# title,
+# createtime,
+# seo_title,
+# description,
+# keywords,
+# click,
+# abstract,
+# status,
+# img_md5,
+# writer,
+# body,approve_date,approve_person,
+# is_baidu_push,totaldown,filesize,star,local_img,
+# pc_down_url,app_down_url,
+# version,soft_update_time,filename,language,
+# qrcode,android_down_url,ios_down_url
+
 import qrcode
 import pyqrcode
 import mysql.connector
