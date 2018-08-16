@@ -38,6 +38,7 @@
 
 import qrcode
 import pyqrcode
+import hashlib 
 import mysql.connector
 import re
 import json
@@ -51,11 +52,22 @@ PASS = "dbuser705"
 DBNAME = "3xiazai-handle-B"
 
 config = {
-  'user': 'dbuser',
-  'password': 'dbuser705',
-  'host': '10.10.10.21',
-  'port': '5001',
+  'user': '',
+  'password': '',
+  'host': '',
+  'port': '',
   'database': "3xiazai-handle-B",
+  'charset': "utf8",
+  'raise_on_warnings': True,
+  'use_pure': False,
+}
+
+online = {
+  'user': '',
+  'password': '',
+  'host': '',
+  'port': '',
+  'database': "sxiazai",
   'charset': "utf8",
   'raise_on_warnings': True,
   'use_pure': False,
@@ -196,12 +208,53 @@ def differ_pc_or_app():
             cnx.commit()
             print(cursor.statement)  
             
-                
-            
+def generate_qrcode():
+    cnx = mysql.connector.connect(**online)
+    cursor = cnx.cursor()
+    query = "SELECT id,cat_url,parent_cat_url FROM xz_article WHERE id<=77337 and id>=74031 and parent_cat_url not in ('yxgl','news') and `status` > 0 order by id desc"
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    for id,cat_url,parent_cat_url in rows:
+        # print(id,cat_url,parent_cat_url)
+        url = "http://m.3xiazai.com/" + parent_cat_url + '/' + cat_url + '/' + str(id) +  '.html'
+        # print(url)
+        qrcode_xx(url,id)
+        
 
+def qrcode_xx(data,id):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="black", back_color="white")
+    m = hashlib.md5(img.tobytes()).hexdigest()
+    dir1 = m[0:2]
+    dir2 = m[2:4]
+    path = './qrcode/' + dir1 + '/' + dir2 + '/'
+    filename = m + '.png'
+    if (not os.path.isdir(path)):
+        os.makedirs(path)
+    print(dir1,dir2,id,data,m)
+    print(id,data,m)
+    img.save(path + filename)
+    update_qrcode(id,m)
+
+def update_qrcode(id,qrcode):
+    cnx = mysql.connector.connect(**online)
+    cursor = cnx.cursor()
+    sql = "update xz_article set qrcode=%(qrcode)s where id=%(id)s"
+    cursor.execute(sql,{"qrcode":qrcode,"id":id})
+    print(id,cursor.statement)
+    cnx.commit()
+# def checksum_files():
 # def generate_tiny_table():
 
 # def insert_to_online():
 if __name__ == "__main__":
     # execute only if run as a script
-    differ_pc_or_app() 
+    generate_qrcode() 
